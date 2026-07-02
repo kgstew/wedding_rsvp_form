@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import GuestNamesStep from "./components/GuestNamesStep";
 import EventRsvpStep from "./components/EventRsvpStep";
 import ThankYou from "./components/ThankYou";
@@ -63,37 +64,70 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-full flex-1 items-center justify-center bg-stone-100 px-4 py-12">
-      <div className="w-full max-w-lg">
-        <header className="mb-8 text-center">
-          <p className="text-xs uppercase tracking-[0.2em] text-stone-400">
-            You&apos;re invited
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold text-stone-800">RSVP</h1>
-          <p className="mt-2 text-sm text-stone-500">
-            Welcome Party · After Party · Farewell Brunch
-          </p>
-        </header>
+    <main className="relative flex min-h-full flex-1 items-center justify-center overflow-hidden px-4 py-12">
+      {/* Botanical illustration as a soft background accent (large screens only) */}
+      <div className="pointer-events-none absolute -bottom-24 -left-28 hidden w-[28rem] opacity-20 lg:block">
+        <Image
+          src="/images/IMG_6850.jpeg"
+          alt=""
+          width={750}
+          height={1000}
+          className="w-full mix-blend-multiply"
+        />
+      </div>
 
-        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-200 sm:p-8">
-          {step === "names" && (
-            <GuestNamesStep
-              names={names}
-              onChange={setNames}
-              onContinue={goToEvents}
+      <div className="relative w-full max-w-lg">
+        <div className="overflow-hidden rounded-3xl bg-ivory shadow-xl ring-1 ring-burgundy/10">
+          {/* Hero — dahlia bouquet */}
+          <div className="relative h-44 w-full sm:h-52">
+            <Image
+              src="/images/IMG_7610.jpeg"
+              alt="A bouquet of dahlias"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 512px"
+              className="object-cover"
             />
-          )}
-          {step === "events" && (
-            <EventRsvpStep
-              guests={guests}
-              onChange={setGuests}
-              onBack={() => setStep("names")}
-              onSubmit={submit}
-              submitting={submitting}
-              error={error}
-            />
-          )}
-          {step === "done" && <ThankYou onReset={reset} />}
+            <div className="absolute inset-0 bg-gradient-to-t from-plum/50 via-plum/5 to-transparent" />
+          </div>
+
+          <div className="p-6 sm:p-9">
+            <header className="mb-8 text-center">
+              <p className="font-display text-xl italic text-rose">
+                You&apos;re invited
+              </p>
+              <h1 className="mt-1 font-display text-5xl font-semibold tracking-wide text-burgundy">
+                RSVP
+              </h1>
+              <div className="mx-auto mt-3 flex items-center justify-center gap-3 text-gold">
+                <span className="h-px w-8 bg-gold/50" />
+                <span className="text-sm">❀</span>
+                <span className="h-px w-8 bg-gold/50" />
+              </div>
+              <p className="mt-3 text-sm tracking-wide text-foreground/60">
+                Welcome Party · After Party · Farewell Brunch
+              </p>
+            </header>
+
+            {step === "names" && (
+              <GuestNamesStep
+                names={names}
+                onChange={setNames}
+                onContinue={goToEvents}
+              />
+            )}
+            {step === "events" && (
+              <EventRsvpStep
+                guests={guests}
+                onChange={setGuests}
+                onBack={() => setStep("names")}
+                onSubmit={submit}
+                submitting={submitting}
+                error={error}
+              />
+            )}
+            {step === "done" && <ThankYou onReset={reset} />}
+          </div>
         </div>
       </div>
     </main>

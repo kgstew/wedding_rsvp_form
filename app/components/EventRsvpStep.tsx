@@ -33,10 +33,10 @@ export default function EventRsvpStep({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="text-xl font-semibold text-stone-800">
+        <h2 className="font-display text-2xl font-semibold text-burgundy">
           Which events will you attend?
         </h2>
-        <p className="mt-1 text-sm text-stone-500">
+        <p className="mt-1 text-sm text-foreground/60">
           Select Yes or No for each guest and event.
         </p>
       </div>
@@ -45,9 +45,11 @@ export default function EventRsvpStep({
         {guests.map((guest, guestIndex) => (
           <div
             key={guestIndex}
-            className="rounded-xl border border-stone-200 bg-stone-50/60 p-5"
+            className="rounded-xl border border-burgundy/15 bg-cream/60 p-5"
           >
-            <h3 className="mb-4 font-medium text-stone-800">{guest.name}</h3>
+            <h3 className="mb-4 font-display text-xl font-semibold text-burgundy">
+              {guest.name}
+            </h3>
             <div className="flex flex-col gap-3">
               {EVENTS.map((event) => {
                 const value = guest[event.key];
@@ -56,7 +58,7 @@ export default function EventRsvpStep({
                     key={event.key}
                     className="flex items-center justify-between gap-4"
                   >
-                    <span className="text-sm text-stone-700">
+                    <span className="text-sm text-foreground/80">
                       {event.label}
                     </span>
                     <div className="flex gap-2">
@@ -75,9 +77,9 @@ export default function EventRsvpStep({
                             className={`w-16 rounded-lg border px-3 py-1.5 text-sm font-medium transition ${
                               selected
                                 ? option.val
-                                  ? "border-emerald-600 bg-emerald-600 text-white"
-                                  : "border-stone-500 bg-stone-700 text-white"
-                                : "border-stone-300 bg-white text-stone-600 hover:border-stone-400"
+                                  ? "border-sage bg-sage text-white"
+                                  : "border-rose bg-rose text-white"
+                                : "border-burgundy/20 bg-white text-foreground/70 hover:border-rose/50"
                             }`}
                           >
                             {option.label}
@@ -94,7 +96,7 @@ export default function EventRsvpStep({
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="rounded-lg bg-coral/10 px-4 py-3 text-sm text-coral">
           {error}
         </p>
       )}
@@ -104,7 +106,7 @@ export default function EventRsvpStep({
           type="button"
           onClick={onBack}
           disabled={submitting}
-          className="rounded-lg border border-stone-300 px-5 py-3 font-medium text-stone-700 transition hover:bg-stone-100 disabled:opacity-40"
+          className="rounded-lg border border-burgundy/25 px-5 py-3 font-medium text-burgundy transition hover:bg-cream disabled:opacity-40"
         >
           Back
         </button>
@@ -112,7 +114,7 @@ export default function EventRsvpStep({
           type="button"
           onClick={onSubmit}
           disabled={submitting}
-          className="flex-1 rounded-lg bg-stone-800 px-5 py-3 font-medium text-white transition hover:bg-stone-900 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex-1 rounded-lg bg-burgundy px-5 py-3 font-medium tracking-wide text-white transition hover:bg-plum disabled:cursor-not-allowed disabled:opacity-40"
         >
           {submitting ? "Submitting…" : "Submit RSVP"}
         </button>

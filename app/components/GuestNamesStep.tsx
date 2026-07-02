@@ -28,10 +28,10 @@ export default function GuestNamesStep({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-xl font-semibold text-stone-800">
+        <h2 className="font-display text-2xl font-semibold text-burgundy">
           Who&apos;s in your party?
         </h2>
-        <p className="mt-1 text-sm text-stone-500">
+        <p className="mt-1 text-sm text-foreground/60">
           Add the name of everyone you&apos;re RSVPing for.
         </p>
       </div>
@@ -44,14 +44,14 @@ export default function GuestNamesStep({
               value={name}
               onChange={(e) => updateName(index, e.target.value)}
               placeholder={`Guest ${index + 1}`}
-              className="flex-1 rounded-lg border border-stone-300 px-4 py-2.5 text-stone-800 shadow-sm outline-none transition focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
+              className="flex-1 rounded-lg border border-burgundy/20 bg-white px-4 py-2.5 text-foreground shadow-sm outline-none transition focus:border-rose focus:ring-2 focus:ring-rose/25"
             />
             {names.length > 1 && (
               <button
                 type="button"
                 onClick={() => removeName(index)}
                 aria-label={`Remove guest ${index + 1}`}
-                className="rounded-lg px-3 py-2.5 text-stone-400 transition hover:bg-stone-100 hover:text-stone-600"
+                className="rounded-lg px-3 py-2.5 text-rose/50 transition hover:bg-cream hover:text-rose"
               >
                 ✕
               </button>
@@ -63,7 +63,7 @@ export default function GuestNamesStep({
       <button
         type="button"
         onClick={addName}
-        className="self-start text-sm font-medium text-stone-600 underline-offset-4 hover:underline"
+        className="self-start text-sm font-medium text-sage underline-offset-4 hover:underline"
       >
         + Add another guest
       </button>
@@ -72,7 +72,7 @@ export default function GuestNamesStep({
         type="button"
         onClick={onContinue}
         disabled={!hasValidName}
-        className="mt-2 rounded-lg bg-stone-800 px-5 py-3 font-medium text-white transition hover:bg-stone-900 disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-2 rounded-lg bg-burgundy px-5 py-3 font-medium tracking-wide text-white transition hover:bg-plum disabled:cursor-not-allowed disabled:opacity-40"
       >
         Continue
       </button>

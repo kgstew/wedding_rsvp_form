@@ -1,19 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f1e8;
+  --foreground: #4a3236;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* Dahlia wedding palette */
+  --color-cream: #f7f1e8;
+  --color-ivory: #fffdf8;
+  --color-burgundy: #6d2437;
+  --color-plum: #43202b;
+  --color-rose: #a85067;
+  --color-dusty: #cf9aa6;
+  --color-coral: #c65d4e;
+  --color-sage: #7f9070;
+  --color-gold: #bd9648;
+
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-cormorant);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
