@@ -21,6 +21,21 @@ export default function ThankYou({ onReset }: ThankYouProps) {
           Your RSVP has been received. We can&apos;t wait to celebrate with you.
         </p>
       </div>
+
+      <div className="flex flex-col items-center gap-1">
+        <p className="text-sm text-foreground/60">
+          For all the details, visit our wedding website:
+        </p>
+        <a
+          href="https://kyeanne.minted.us/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-lg bg-burgundy px-5 py-2.5 text-sm font-medium tracking-wide text-white transition hover:bg-plum"
+        >
+          Visit our wedding website →
+        </a>
+      </div>
+
       <button
         type="button"
         onClick={onReset}
