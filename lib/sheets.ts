@@ -10,6 +10,7 @@ export const SHEET_HEADERS = [
   "Welcome Party",
   "After Party",
   "Farewell Brunch",
+  "Shuttle",
   "Submitted At",
 ];
 
@@ -64,13 +65,14 @@ export async function upsertRsvp(guests: GuestRsvp[]): Promise<void> {
     yesNo(guest.welcomeParty),
     yesNo(guest.afterParty),
     yesNo(guest.farewellBrunch),
+    yesNo(guest.shuttle),
     submittedAt,
   ];
 
   // Read existing data rows (below the header) to find matches by name.
   const existing = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "A2:F",
+    range: "A2:G",
   });
   const existingRows = existing.data.values ?? [];
 
@@ -88,7 +90,7 @@ export async function upsertRsvp(guests: GuestRsvp[]): Promise<void> {
     const rowNumber = rowByKey.get(guestKey(guest.firstName, guest.lastName));
     if (rowNumber) {
       updates.push({
-        range: `A${rowNumber}:F${rowNumber}`,
+        range: `A${rowNumber}:G${rowNumber}`,
         values: [toRow(guest)],
       });
     } else {

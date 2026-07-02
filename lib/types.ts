@@ -7,6 +7,7 @@ export interface GuestRsvp extends GuestName {
   welcomeParty: boolean;
   afterParty: boolean;
   farewellBrunch: boolean;
+  shuttle: boolean;
 }
 
 export interface RsvpSubmission {
@@ -52,6 +53,9 @@ export const EVENTS = [
 ] as const;
 
 export type EventKey = (typeof EVENTS)[number]["key"];
+
+/** All boolean answer fields collected per guest (events + shuttle). */
+export type RsvpFieldKey = EventKey | "shuttle";
 
 /** The main wedding event — informational only, no RSVP collected. */
 export const WEDDING = {

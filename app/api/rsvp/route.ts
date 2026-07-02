@@ -14,7 +14,8 @@ function isValidGuest(value: unknown): value is GuestRsvp {
     typeof guest.lastName === "string" &&
     typeof guest.welcomeParty === "boolean" &&
     typeof guest.afterParty === "boolean" &&
-    typeof guest.farewellBrunch === "boolean"
+    typeof guest.farewellBrunch === "boolean" &&
+    typeof guest.shuttle === "boolean"
   );
 }
 
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
     welcomeParty: guest.welcomeParty,
     afterParty: guest.afterParty,
     farewellBrunch: guest.farewellBrunch,
+    shuttle: guest.shuttle,
   }));
 
   try {

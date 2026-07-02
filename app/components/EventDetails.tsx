@@ -1,12 +1,12 @@
 import { Fragment } from "react";
-import { EVENTS, type EventKey, type GuestRsvp } from "@/lib/types";
+import { EVENTS, type GuestRsvp, type RsvpFieldKey } from "@/lib/types";
 import YesNoToggle from "./YesNoToggle";
 import WeddingCard from "./WeddingCard";
 
 interface EventDetailsProps {
   /** When provided, each event card shows per-guest Yes/No toggles. */
   guests?: GuestRsvp[];
-  onAnswer?: (guestIndex: number, key: EventKey, value: boolean) => void;
+  onAnswer?: (guestIndex: number, key: RsvpFieldKey, value: boolean) => void;
 }
 
 const mapsUrl = (address: string) =>
@@ -101,7 +101,9 @@ export default function EventDetails({ guests, onAnswer }: EventDetailsProps) {
             )}
           </article>
           {/* The wedding falls chronologically after the Friday welcome party */}
-          {event.key === "welcomeParty" && <WeddingCard />}
+          {event.key === "welcomeParty" && (
+            <WeddingCard guests={guests} onAnswer={onAnswer} />
+          )}
           </Fragment>
         ))}
       </div>

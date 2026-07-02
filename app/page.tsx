@@ -5,7 +5,7 @@ import Image from "next/image";
 import GuestNamesStep from "./components/GuestNamesStep";
 import ThankYou from "./components/ThankYou";
 import EventDetails from "./components/EventDetails";
-import type { EventKey, GuestName, GuestRsvp } from "@/lib/types";
+import type { GuestName, GuestRsvp, RsvpFieldKey } from "@/lib/types";
 
 type Step = "names" | "events" | "done";
 
@@ -39,13 +39,16 @@ export default function Home() {
       if (raw) {
         const saved = JSON.parse(raw) as {
           names?: GuestName[];
-          guests?: GuestRsvp[];
+          guests?: Array<Omit<GuestRsvp, "shuttle"> & { shuttle?: boolean }>;
         };
         if (Array.isArray(saved.names) && saved.names.length > 0) {
           setNames(saved.names);
         }
         if (Array.isArray(saved.guests) && saved.guests.length > 0) {
-          setGuests(saved.guests);
+          // Normalize older saved state that predates newer answer fields.
+          setGuests(
+            saved.guests.map((g) => ({ ...g, shuttle: g.shuttle ?? false }))
+          );
           // Drop returning visitors onto their answers so they can edit/resubmit.
           setStep("events");
         }
@@ -85,6 +88,7 @@ export default function Home() {
             welcomeParty: prior?.welcomeParty ?? false,
             afterParty: prior?.afterParty ?? false,
             farewellBrunch: prior?.farewellBrunch ?? false,
+            shuttle: prior?.shuttle ?? false,
           };
         })
     );
@@ -93,7 +97,11 @@ export default function Home() {
     window.scrollTo({ top: 0 });
   };
 
-  const setAnswer = (guestIndex: number, key: EventKey, value: boolean) => {
+  const setAnswer = (
+    guestIndex: number,
+    key: RsvpFieldKey,
+    value: boolean
+  ) => {
     setGuests((prev) =>
       prev.map((guest, i) =>
         i === guestIndex ? { ...guest, [key]: value } : guest
