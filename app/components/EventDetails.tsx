@@ -1,5 +1,7 @@
+import { Fragment } from "react";
 import { EVENTS, type EventKey, type GuestRsvp } from "@/lib/types";
 import YesNoToggle from "./YesNoToggle";
+import WeddingCard from "./WeddingCard";
 
 interface EventDetailsProps {
   /** When provided, each event card shows per-guest Yes/No toggles. */
@@ -30,8 +32,8 @@ export default function EventDetails({ guests, onAnswer }: EventDetailsProps) {
 
       <div className="flex flex-col gap-5">
         {EVENTS.map((event) => (
+          <Fragment key={event.key}>
           <article
-            key={event.key}
             className="rounded-3xl bg-ivory p-6 shadow-sm ring-1 ring-burgundy/10 sm:p-8"
           >
             <h3 className="font-display text-2xl font-semibold text-burgundy">
@@ -98,6 +100,9 @@ export default function EventDetails({ guests, onAnswer }: EventDetailsProps) {
               </div>
             )}
           </article>
+          {/* The wedding falls chronologically after the Friday welcome party */}
+          {event.key === "welcomeParty" && <WeddingCard />}
+          </Fragment>
         ))}
       </div>
     </section>

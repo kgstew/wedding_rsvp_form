@@ -90,6 +90,7 @@ export default function Home() {
     );
     setError(null);
     setStep("events");
+    window.scrollTo({ top: 0 });
   };
 
   const setAnswer = (guestIndex: number, key: EventKey, value: boolean) => {
@@ -139,7 +140,7 @@ export default function Home() {
   if (!loaded) return null;
 
   return (
-    <main className="relative flex min-h-full flex-1 items-center justify-center overflow-hidden px-4 py-12">
+    <main className="relative flex min-h-full flex-1 flex-col items-center overflow-hidden px-4 py-12">
       {/* Botanical illustration as a soft background accent (large screens only) */}
       <div className="pointer-events-none absolute -bottom-24 -left-28 hidden w-[28rem] opacity-20 lg:block">
         <Image
@@ -151,7 +152,7 @@ export default function Home() {
         />
       </div>
 
-      <div className="relative w-full max-w-lg">
+      <div className="relative my-auto w-full max-w-lg">
         <div className="overflow-hidden rounded-3xl bg-ivory shadow-xl ring-1 ring-burgundy/10">
           {/* Hero — dahlia bouquet */}
           <div className="relative h-44 w-full sm:h-52">
