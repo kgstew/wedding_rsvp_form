@@ -213,6 +213,26 @@ export default function Home() {
                 >
                   Edit names
                 </button>
+
+                {/* Suggestive nudge to scroll down to the event cards */}
+                <div
+                  aria-hidden="true"
+                  className="mt-8 flex flex-col items-center text-gold"
+                >
+                  <svg
+                    className="h-6 w-6 animate-bounce"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
               </div>
             )}
             {step === "done" && <ThankYou onReset={reset} />}
