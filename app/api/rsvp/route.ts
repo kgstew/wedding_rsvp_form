@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { appendRsvp } from "@/lib/sheets";
+import { upsertRsvp } from "@/lib/sheets";
 import type { GuestRsvp } from "@/lib/types";
 
 // googleapis relies on Node.js APIs, so this route must run on the Node runtime.
@@ -50,10 +50,10 @@ export async function POST(request: Request) {
   }));
 
   try {
-    await appendRsvp(cleaned);
+    await upsertRsvp(cleaned);
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Failed to append RSVP to Google Sheet:", error);
+    console.error("Failed to save RSVP to Google Sheet:", error);
     return NextResponse.json(
       { error: "Could not save your RSVP. Please try again." },
       { status: 500 }

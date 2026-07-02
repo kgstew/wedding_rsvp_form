@@ -38,27 +38,78 @@ function getSheetsClient() {
 const yesNo = (value: boolean): string => (value ? "Yes" : "No");
 
 /**
- * Appends one row per guest to the configured Google Sheet.
+ * Case- and whitespace-insensitive match key for a guest, used to find an
+ * existing row. "Kyle  Stewart", "kyle stewart", and "kYle Stewart" all match.
  */
-export async function appendRsvp(guests: GuestRsvp[]): Promise<void> {
+const normalize = (value: string): string =>
+  value.trim().toLowerCase().replace(/\s+/g, " ");
+const guestKey = (firstName: string, lastName: string): string =>
+  `${normalize(firstName)} ${normalize(lastName)}`;
+
+/**
+ * Saves guests to the configured Google Sheet, one row per guest.
+ *
+ * Upsert by name: if a guest with the same first + last name already has a row,
+ * that row is updated in place; otherwise a new row is appended. This lets a
+ * guest return and resubmit without creating duplicate rows.
+ */
+export async function upsertRsvp(guests: GuestRsvp[]): Promise<void> {
   const spreadsheetId = getEnv("GOOGLE_SHEET_ID");
   const sheets = getSheetsClient();
   const submittedAt = new Date().toISOString();
 
-  const rows = guests.map((guest) => [
+  const toRow = (guest: GuestRsvp): string[] => [
     guest.firstName,
     guest.lastName,
     yesNo(guest.welcomeParty),
     yesNo(guest.afterParty),
     yesNo(guest.farewellBrunch),
     submittedAt,
-  ]);
+  ];
 
-  await sheets.spreadsheets.values.append({
+  // Read existing data rows (below the header) to find matches by name.
+  const existing = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "A1",
-    valueInputOption: "USER_ENTERED",
-    insertDataOption: "INSERT_ROWS",
-    requestBody: { values: rows },
+    range: "A2:F",
   });
+  const existingRows = existing.data.values ?? [];
+
+  // Map each existing name to its 1-based sheet row number (data starts at row 2).
+  const rowByKey = new Map<string, number>();
+  existingRows.forEach((row, i) => {
+    const key = guestKey(String(row[0] ?? ""), String(row[1] ?? ""));
+    if (!rowByKey.has(key)) rowByKey.set(key, i + 2);
+  });
+
+  const updates: { range: string; values: string[][] }[] = [];
+  const appends: string[][] = [];
+
+  for (const guest of guests) {
+    const rowNumber = rowByKey.get(guestKey(guest.firstName, guest.lastName));
+    if (rowNumber) {
+      updates.push({
+        range: `A${rowNumber}:F${rowNumber}`,
+        values: [toRow(guest)],
+      });
+    } else {
+      appends.push(toRow(guest));
+    }
+  }
+
+  if (updates.length > 0) {
+    await sheets.spreadsheets.values.batchUpdate({
+      spreadsheetId,
+      requestBody: { valueInputOption: "USER_ENTERED", data: updates },
+    });
+  }
+
+  if (appends.length > 0) {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: "A1",
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      requestBody: { values: appends },
+    });
+  }
 }

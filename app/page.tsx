@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import GuestNamesStep from "./components/GuestNamesStep";
 import ThankYou from "./components/ThankYou";
@@ -8,6 +8,14 @@ import EventDetails from "./components/EventDetails";
 import type { EventKey, GuestName, GuestRsvp } from "@/lib/types";
 
 type Step = "names" | "events" | "done";
+
+const STORAGE_KEY = "wedding-rsvp-v1";
+
+// Case- and whitespace-insensitive match key: "Kyle  Stewart" === "kyle stewart".
+const normalize = (value: string) =>
+  value.trim().toLowerCase().replace(/\s+/g, " ");
+const guestKey = (firstName: string, lastName: string) =>
+  `${normalize(firstName)} ${normalize(lastName)}`;
 
 export default function Home() {
   const [step, setStep] = useState<Step>("names");
@@ -17,18 +25,68 @@ export default function Home() {
   const [guests, setGuests] = useState<GuestRsvp[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Gate rendering until we've restored any saved progress, to avoid a flash
+  // of the empty form for returning visitors.
+  const [loaded, setLoaded] = useState(false);
+
+  // Restore in-progress RSVP from localStorage on first load. Setting state in
+  // this effect is intentional: reading localStorage must happen after mount to
+  // avoid an SSR hydration mismatch, and it runs exactly once.
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as {
+          names?: GuestName[];
+          guests?: GuestRsvp[];
+        };
+        if (Array.isArray(saved.names) && saved.names.length > 0) {
+          setNames(saved.names);
+        }
+        if (Array.isArray(saved.guests) && saved.guests.length > 0) {
+          setGuests(saved.guests);
+          // Drop returning visitors onto their answers so they can edit/resubmit.
+          setStep("events");
+        }
+      }
+    } catch {
+      // Ignore malformed/unavailable storage.
+    }
+    setLoaded(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
+
+  // Persist progress whenever names or guests change (after the initial load).
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ names, guests }));
+    } catch {
+      // Ignore storage write failures (e.g. private mode quota).
+    }
+  }, [loaded, names, guests]);
 
   const goToEvents = () => {
+    // Preserve any prior answers when returning to edit names.
+    const priorByKey = new Map(
+      guests.map((g) => [guestKey(g.firstName, g.lastName), g])
+    );
     setGuests(
       names
         .filter((name) => name.firstName.trim().length > 0)
-        .map((name) => ({
-          firstName: name.firstName.trim(),
-          lastName: name.lastName.trim(),
-          welcomeParty: false,
-          afterParty: false,
-          farewellBrunch: false,
-        }))
+        .map((name) => {
+          const prior = priorByKey.get(
+            guestKey(name.firstName, name.lastName)
+          );
+          return {
+            firstName: name.firstName.trim(),
+            lastName: name.lastName.trim(),
+            welcomeParty: prior?.welcomeParty ?? false,
+            afterParty: prior?.afterParty ?? false,
+            farewellBrunch: prior?.farewellBrunch ?? false,
+          };
+        })
     );
     setError(null);
     setStep("events");
@@ -66,11 +124,18 @@ export default function Home() {
   };
 
   const reset = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore storage failures.
+    }
     setNames([{ firstName: "", lastName: "" }]);
     setGuests([]);
     setError(null);
     setStep("names");
   };
+
+  if (!loaded) return null;
 
   return (
     <main className="relative flex min-h-full flex-1 items-center justify-center overflow-hidden px-4 py-12">
