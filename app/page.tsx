@@ -3,34 +3,43 @@
 import { useState } from "react";
 import Image from "next/image";
 import GuestNamesStep from "./components/GuestNamesStep";
-import EventRsvpStep from "./components/EventRsvpStep";
 import ThankYou from "./components/ThankYou";
-import type { GuestRsvp } from "@/lib/types";
+import EventDetails from "./components/EventDetails";
+import type { EventKey, GuestName, GuestRsvp } from "@/lib/types";
 
 type Step = "names" | "events" | "done";
 
 export default function Home() {
   const [step, setStep] = useState<Step>("names");
-  const [names, setNames] = useState<string[]>([""]);
+  const [names, setNames] = useState<GuestName[]>([
+    { firstName: "", lastName: "" },
+  ]);
   const [guests, setGuests] = useState<GuestRsvp[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const goToEvents = () => {
-    const cleanedNames = names
-      .map((name) => name.trim())
-      .filter((name) => name.length > 0);
-
     setGuests(
-      cleanedNames.map((name) => ({
-        name,
-        welcomeParty: false,
-        afterParty: false,
-        farewellBrunch: false,
-      }))
+      names
+        .filter((name) => name.firstName.trim().length > 0)
+        .map((name) => ({
+          firstName: name.firstName.trim(),
+          lastName: name.lastName.trim(),
+          welcomeParty: false,
+          afterParty: false,
+          farewellBrunch: false,
+        }))
     );
     setError(null);
     setStep("events");
+  };
+
+  const setAnswer = (guestIndex: number, key: EventKey, value: boolean) => {
+    setGuests((prev) =>
+      prev.map((guest, i) =>
+        i === guestIndex ? { ...guest, [key]: value } : guest
+      )
+    );
   };
 
   const submit = async () => {
@@ -57,7 +66,7 @@ export default function Home() {
   };
 
   const reset = () => {
-    setNames([""]);
+    setNames([{ firstName: "", lastName: "" }]);
     setGuests([]);
     setError(null);
     setStep("names");
@@ -117,18 +126,56 @@ export default function Home() {
               />
             )}
             {step === "events" && (
-              <EventRsvpStep
-                guests={guests}
-                onChange={setGuests}
-                onBack={() => setStep("names")}
-                onSubmit={submit}
-                submitting={submitting}
-                error={error}
-              />
+              <div className="text-center">
+                <h2 className="font-display text-2xl font-semibold text-burgundy">
+                  RSVPing for
+                </h2>
+                <p className="mt-1 text-foreground/70">
+                  {guests
+                    .map((g) => `${g.firstName} ${g.lastName}`.trim())
+                    .join(", ")}
+                </p>
+                <p className="mt-4 text-sm text-foreground/60">
+                  Let us know which events each guest will attend below, then
+                  send your RSVP.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStep("names")}
+                  className="mt-4 text-sm font-medium text-sage underline-offset-4 hover:underline"
+                >
+                  Edit names
+                </button>
+              </div>
             )}
             {step === "done" && <ThankYou onReset={reset} />}
           </div>
         </div>
+
+        {step !== "names" && (
+          <EventDetails
+            guests={step === "events" ? guests : undefined}
+            onAnswer={step === "events" ? setAnswer : undefined}
+          />
+        )}
+
+        {step === "events" && (
+          <div className="mt-8">
+            {error && (
+              <p className="mb-4 rounded-lg bg-coral/10 px-4 py-3 text-center text-sm text-coral">
+                {error}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={submit}
+              disabled={submitting}
+              className="w-full rounded-lg bg-burgundy px-5 py-3.5 font-medium tracking-wide text-white shadow-sm transition hover:bg-plum disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {submitting ? "Submitting…" : "Submit RSVP"}
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

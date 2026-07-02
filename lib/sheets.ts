@@ -5,7 +5,8 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
 /** Header row that should exist in the target sheet (row 1). */
 export const SHEET_HEADERS = [
-  "Name",
+  "First Name",
+  "Last Name",
   "Welcome Party",
   "After Party",
   "Farewell Brunch",
@@ -45,7 +46,8 @@ export async function appendRsvp(guests: GuestRsvp[]): Promise<void> {
   const submittedAt = new Date().toISOString();
 
   const rows = guests.map((guest) => [
-    guest.name,
+    guest.firstName,
+    guest.lastName,
     yesNo(guest.welcomeParty),
     yesNo(guest.afterParty),
     yesNo(guest.farewellBrunch),

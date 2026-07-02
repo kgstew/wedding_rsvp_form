@@ -9,8 +9,9 @@ function isValidGuest(value: unknown): value is GuestRsvp {
   if (typeof value !== "object" || value === null) return false;
   const guest = value as Record<string, unknown>;
   return (
-    typeof guest.name === "string" &&
-    guest.name.trim().length > 0 &&
+    typeof guest.firstName === "string" &&
+    guest.firstName.trim().length > 0 &&
+    typeof guest.lastName === "string" &&
     typeof guest.welcomeParty === "boolean" &&
     typeof guest.afterParty === "boolean" &&
     typeof guest.farewellBrunch === "boolean"
@@ -41,7 +42,8 @@ export async function POST(request: Request) {
   }
 
   const cleaned: GuestRsvp[] = guests.map((guest) => ({
-    name: guest.name.trim(),
+    firstName: guest.firstName.trim(),
+    lastName: guest.lastName.trim(),
     welcomeParty: guest.welcomeParty,
     afterParty: guest.afterParty,
     farewellBrunch: guest.farewellBrunch,

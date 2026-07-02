@@ -1,8 +1,10 @@
 "use client";
 
+import type { GuestName } from "@/lib/types";
+
 interface GuestNamesStepProps {
-  names: string[];
-  onChange: (names: string[]) => void;
+  names: GuestName[];
+  onChange: (names: GuestName[]) => void;
   onContinue: () => void;
 }
 
@@ -11,19 +13,22 @@ export default function GuestNamesStep({
   onChange,
   onContinue,
 }: GuestNamesStepProps) {
-  const updateName = (index: number, value: string) => {
-    const next = [...names];
-    next[index] = value;
+  const updateName = (index: number, field: keyof GuestName, value: string) => {
+    const next = names.map((name, i) =>
+      i === index ? { ...name, [field]: value } : name
+    );
     onChange(next);
   };
 
-  const addName = () => onChange([...names, ""]);
+  const addName = () => onChange([...names, { firstName: "", lastName: "" }]);
 
   const removeName = (index: number) => {
     onChange(names.filter((_, i) => i !== index));
   };
 
-  const hasValidName = names.some((name) => name.trim().length > 0);
+  const validCount = names.filter(
+    (name) => name.firstName.trim().length > 0
+  ).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -41,17 +46,24 @@ export default function GuestNamesStep({
           <div key={index} className="flex items-center gap-2">
             <input
               type="text"
-              value={name}
-              onChange={(e) => updateName(index, e.target.value)}
-              placeholder={`Guest ${index + 1}`}
-              className="flex-1 rounded-lg border border-burgundy/20 bg-white px-4 py-2.5 text-foreground shadow-sm outline-none transition focus:border-rose focus:ring-2 focus:ring-rose/25"
+              value={name.firstName}
+              onChange={(e) => updateName(index, "firstName", e.target.value)}
+              placeholder="First name"
+              className="min-w-0 flex-1 rounded-lg border border-burgundy/20 bg-white px-4 py-2.5 text-foreground shadow-sm outline-none transition focus:border-rose focus:ring-2 focus:ring-rose/25"
+            />
+            <input
+              type="text"
+              value={name.lastName}
+              onChange={(e) => updateName(index, "lastName", e.target.value)}
+              placeholder="Last name"
+              className="min-w-0 flex-1 rounded-lg border border-burgundy/20 bg-white px-4 py-2.5 text-foreground shadow-sm outline-none transition focus:border-rose focus:ring-2 focus:ring-rose/25"
             />
             {names.length > 1 && (
               <button
                 type="button"
                 onClick={() => removeName(index)}
                 aria-label={`Remove guest ${index + 1}`}
-                className="rounded-lg px-3 py-2.5 text-rose/50 transition hover:bg-cream hover:text-rose"
+                className="shrink-0 rounded-lg px-3 py-2.5 text-rose/50 transition hover:bg-cream hover:text-rose"
               >
                 ✕
               </button>
@@ -71,10 +83,12 @@ export default function GuestNamesStep({
       <button
         type="button"
         onClick={onContinue}
-        disabled={!hasValidName}
+        disabled={validCount === 0}
         className="mt-2 rounded-lg bg-burgundy px-5 py-3 font-medium tracking-wide text-white transition hover:bg-plum disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Continue
+        {validCount === 0
+          ? "RSVP"
+          : `RSVP for ${validCount} ${validCount === 1 ? "guest" : "guests"}`}
       </button>
     </div>
   );

@@ -14,7 +14,7 @@ via a service account. Deploys to Vercel.
 3. On submit, the browser POSTs to `/api/rsvp`, a Node serverless route that
    appends **one row per guest** to the sheet:
 
-   `Name | Welcome Party | After Party | Farewell Brunch | Submitted At`
+   `First Name | Last Name | Welcome Party | After Party | Farewell Brunch | Submitted At`
 
 Google credentials never reach the browser — they live only in server-side
 environment variables.
@@ -30,7 +30,8 @@ environment variables.
 4. Open the service account → **Keys** → Add Key → Create new key → **JSON**.
    Download the file. You'll use its `client_email` and `private_key`.
 5. Create a Google Sheet. In **row 1**, add the header row:
-   `Name`, `Welcome Party`, `After Party`, `Farewell Brunch`, `Submitted At`.
+   `First Name`, `Last Name`, `Welcome Party`, `After Party`,
+   `Farewell Brunch`, `Submitted At`.
 6. **Share the sheet** with the service account's `client_email` as an **Editor**.
 7. Copy the sheet ID from its URL:
    `https://docs.google.com/spreadsheets/d/`**`THIS_IS_THE_ID`**`/edit`.
