@@ -15,7 +15,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "RSVP",
+  title: "Kyeanne RSVP",
   description: "RSVP for the Welcome Party, After Party, and Farewell Brunch.",
 };
 
