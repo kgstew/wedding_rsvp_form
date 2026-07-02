@@ -36,7 +36,7 @@ function getSheetsClient() {
   return google.sheets({ version: "v4", auth });
 }
 
-const yesNo = (value: boolean): string => (value ? "Yes" : "No");
+const toBit = (value: boolean): string => (value ? "1" : "0");
 
 /**
  * Case- and whitespace-insensitive match key for a guest, used to find an
@@ -62,10 +62,10 @@ export async function upsertRsvp(guests: GuestRsvp[]): Promise<void> {
   const toRow = (guest: GuestRsvp): string[] => [
     guest.firstName,
     guest.lastName,
-    yesNo(guest.welcomeParty),
-    yesNo(guest.afterParty),
-    yesNo(guest.farewellBrunch),
-    yesNo(guest.shuttle),
+    toBit(guest.welcomeParty),
+    toBit(guest.afterParty),
+    toBit(guest.farewellBrunch),
+    toBit(guest.shuttle),
     submittedAt,
   ];
 
