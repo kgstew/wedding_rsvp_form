@@ -42,7 +42,10 @@ export default function EventDetails({ guests, onAnswer }: EventDetailsProps) {
             </p>
             <p className="text-sm text-foreground/60">{event.time}</p>
 
-            <p className="mt-3 text-sm text-foreground/70">{event.address}</p>
+            <p className="mt-3 text-sm font-medium text-foreground/80">
+              {event.venue}
+            </p>
+            <p className="text-sm text-foreground/70">{event.address}</p>
 
             <p className="mt-4 text-sm leading-relaxed text-foreground/80">
               {event.description}

@@ -114,6 +114,7 @@ export default function Home() {
         throw new Error(data?.error ?? "Something went wrong.");
       }
       setStep("done");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Try again."
